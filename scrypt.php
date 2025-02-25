@@ -1,15 +1,16 @@
 <?php
+$config = require 'config.php';
+
 //connexion bdd
-$host = "localhost";
-$user = "login5135";
-$password = "EbGQdGvGvUtdVko";
-$database = "dbforum";
+$host = $config['db']['host'];
+$user = $config['db']['user'];
+$password = $config['db']['password'];
+$database = $config['db']['database'];
 
 // connexion SSH
-$ssh_host = "ssh -p 5135 login5135@s3-5135.nuage-peda.fr";
-$ssh_user = "login5135";
-$ssh_password = "EbGQdGvGvUtdVko";
-$remote_path = "/var/www/html/backup";
+$ssh_host = $config['ssh']['host'];
+$ssh_user = $config['ssh']['user'];
+$ssh_password = $config['ssh']['password'];
 
 // fichier sauvegarde
 $backup_file = "/var/www/html/database";
@@ -39,7 +40,7 @@ function encrypt_file() {
 
 // Fonction pour envoyer le fichier chiffré par SSH
 function send_file_via_ssh() {
-    global $ssh_host, $ssh_user, $ssh_password, $encrypted_file, $remote_path;
+    global $ssh_host, $ssh_user, $ssh_password, $encrypted_file;
     exec("scp testbdd.sql.enc backup123@10.229.187.102:/var/www/html/backup");
     echo('fichier envoyer');
 }
@@ -49,24 +50,20 @@ function send_file_via_ssh() {
 //* Fonction pour vérifier l'intégrité du fichier
 
 
- /* 
- function verify_checksum() {
+/*function verify_checksum() {
     global $ssh_host, $ssh_user, $ssh_password, $remote_path, $encrypted_file, $checksum_command;
 
 
     $local_checksum = exec("$checksum_command $encrypted_file");
 
-    $remote_checksum = exec("sshpass -p '$ssh_password' ssh $ssh_user@$ssh_host \"$checksum_command $remote_path/$encrypted_file\"");
+    $remote_checksum = exec("sshpass -p '$ssh_password' ssh $ssh_user@$ssh_host \"$checksum_command $remote_path/testbdd.sql.enc\"");
 
     if ($local_checksum == $remote_checksum) {
         echo "Les checksums correspondent, le transfert est réussi.\n";
     } else {
         echo "Les checksums ne correspondent pas, une erreur est survenue.\n";
     }
-}
-
-
-*/
+}*/
 
 
 function decrypt_file() {
@@ -80,8 +77,8 @@ function decrypt_file() {
 
  // Exécution des fonctions
 create_backup();
-encrypt_file();
+//encrypt_file();
 
-send_file_via_ssh();
-decrypt_file();
- // verify_checksum();
+//send_file_via_ssh();
+// decrypt_file();
+// verify_checksum();
